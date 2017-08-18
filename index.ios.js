@@ -92,12 +92,13 @@ export default class arkit1 extends Component {
     this.rAF = requestAnimationFrame(this.everyFrame);
   }
 
-  emitScenePlaneEvent(type, id, node, center, extent) {
+  emitScenePlaneEvent(type, id, node, quaternion, center, extent) {
     if (this.webView) {
       this.webView.injectJavaScript(
         'document.querySelector("a-scene").emit("' + type + '",{'
       + 'id:"' + id + '",'
       + 'node:{x:' + node.x + ', y:' + node.y + ', z:' + node.z + '},'
+      + 'quaternion:{x:' + quaternion.x + ', y:' + quaternion.y + ', z:' + quaternion.z + ',w:' + quaternion.w + '},'
       + 'center:{x:' + center.x + ', y:' + center.y + ', z:' + center.z + '},'
       + 'extent:{x:' + extent.x + ', y:' + extent.y + ', z:' + extent.z + '}'
       + '})');
@@ -122,21 +123,23 @@ export default class arkit1 extends Component {
   }
 
   onPlaneDetected(evt) {
-    // extent, target, center, camera, alignment, node, id
+    // extent, target, center, camera, alignment, node, id, quaternion
+/*
     var msg = 'onPlaneDetected id ' + evt.id + ' node ' + positionString(evt.node) + ' center ' + positionString(evt.center) + ' extent ' + positionString(evt.extent) + ' alignment ' + evt.alignment;
-    //console.warn(msg);
-
+    console.warn(msg);
+*/
     //this.createOrUpdatePlane(evt.id, evt.node, evt.center, evt.extent);
-    this.emitScenePlaneEvent("planedetected", evt.id, evt.node, evt.center, evt.extent);
+    this.emitScenePlaneEvent("planedetected", evt.id, evt.node, evt.quaternion, evt.center, evt.extent);
   }
 
   onPlaneUpdate(evt) {
     // extent, target, center, camera, alignment, node, id
+/*
     var msg = 'onPlaneUpdate id ' + evt.id + ' node ' + positionString(evt.node) + ' center ' + positionString(evt.center) + ' extent ' + positionString(evt.extent) + ' alignment ' + evt.alignment;
-    //console.warn(msg);
-
+    console.warn(msg);
+*/
     //this.createOrUpdatePlane(evt.id, evt.node, evt.center, evt.extent);
-    this.emitScenePlaneEvent("planeupdate", evt.id, evt.node, evt.center, evt.extent);
+    this.emitScenePlaneEvent("planeupdate", evt.id, evt.node, evt.quaternion, evt.center, evt.extent);
   }
 
   componentDidMount() {
@@ -147,6 +150,7 @@ export default class arkit1 extends Component {
     cancelAnimationFrame(this.rAF);
   }
   render() {
+/*
     return (
       <View style={{ flex:1 }}>
         <ARKit
@@ -169,13 +173,13 @@ export default class arkit1 extends Component {
         </ARKit>
       </View>
     );
-/*
+*/
     return (
       <View style={{ flex:1 }}>
         <ARKit
           ref={(el) => this.ARKit = el}
           style={{ flex: 1 }}
-          no-debug
+          debug
           planeDetection
           lightEstimation
           onPlaneDetected={this.onPlaneDetected.bind(this)}
@@ -233,7 +237,6 @@ export default class arkit1 extends Component {
         </ARKit>
       </View>
     );
-*/
   }
 }
 
