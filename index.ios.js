@@ -9,6 +9,8 @@ import { AppRegistry, View, WebView } from 'react-native';
 import { ARKit } from 'react-native-arkit';
 import Dimensions from 'Dimensions';
 
+var RAD2DEG = 57.2958;
+
 function positionString(pos) { return pos.x + ' ' + pos.y + ' ' + pos.z; }
 
 export default class arkit1 extends Component {
@@ -23,14 +25,16 @@ export default class arkit1 extends Component {
     var self = this;
     ARKit.getCameraPosition().then(function (camPos) {
       if (self.webView) {
-        var RAD2DEG = 57.2958;
+        // send event instead of directly manipulating camera
 
-        // FIXME: works for upright portrait, and 90 degrees CCW,
-        //        but not 90 CW or 180
-        var EULERZOFFSET = (Dimensions.get('window').height > Dimensions.get('window').width) ? 90 : 0;
-
+        // FIXME: works for portrait, and 90 CCW, but not 90 CW or 180
+        var w = Dimensions.get('window');
+        var EULERZOFFSET = (w.height > w.width) ? 90 : 0;
+/*
         var injectMe = 
-        'var c=document.querySelector("[camera]");c.setAttribute("position","' + camPos.x + ' ' + camPos.y + ' ' + camPos.z + '");';
+          'var c=document.querySelector("[camera]");'
+        + 'c.setAttribute("position","' + positionString(camPos) + '");';
+
         if (camPos.eulerX) {
           injectMe += 'c.setAttribute("rotation","'
             + (RAD2DEG * camPos.eulerX) + ' '
@@ -38,14 +42,16 @@ export default class arkit1 extends Component {
             + (EULERZOFFSET + RAD2DEG * camPos.eulerZ) + '");'; 
         }
         self.webView.injectJavaScript(injectMe);
-
-        // show on screen
-/*
-        self.webView.injectJavaScript('document.querySelector("[text]").setAttribute("value","' + timestamp + ': ' + camPos.x + ' ' + camPos.y + ' ' + camPos.z
-            + (RAD2DEG * camPos.eulerX) + ' '
-            + (RAD2DEG * camPos.eulerY) + ' '
-            + (EULERZOFFSET + RAD2DEG * camPos.eulerZ) + '");'); 
 */
+        self.webView.injectJavaScript(
+          'document.querySelector("a-scene").emit("synccamerapose",{'
+        + '"position":{x:' + camPos.x
+          + ',y:' + camPos.y
+          + ',z:' + camPos.z
+        + '},"rotation":{x:' + (RAD2DEG * camPos.eulerX)
+          + ',y:' + (RAD2DEG * camPos.eulerY)
+          + ',z:' + (EULERZOFFSET + RAD2DEG * camPos.eulerZ)
+        + '}})'); 
       }
     });
   }
@@ -55,6 +61,8 @@ export default class arkit1 extends Component {
     var self = this;
     ARKit.getCameraProjectionMatrix().then(function (projMatrix) {
       if (self.webView) {
+        // TODO: send event instead of directly manipulating camera
+
         // gather into array; stupid, but working...
         var projMatrixString = '[';
         for (var c=0; c<16; c++) {
@@ -77,43 +85,58 @@ export default class arkit1 extends Component {
 
 
   everyFrame(timestamp) {
-    this.showDimensions(timestamp);
+    //this.showDimensions(timestamp);
     this.syncCameraPosition(timestamp);
     //this.syncCameraProjectionMatrix(timestamp);
 
     this.rAF = requestAnimationFrame(this.everyFrame);
   }
 
+  emitScenePlaneEvent(type, id, node, center, extent) {
+    if (this.webView) {
+      this.webView.injectJavaScript(
+        'document.querySelector("a-scene").emit("' + type + '",{'
+      + 'id:"' + id + '",'
+      + 'node:{x:' + node.x + ', y:' + node.y + ', z:' + node.z + '},'
+      + 'center:{x:' + center.x + ', y:' + center.y + ', z:' + center.z + '},'
+      + 'extent:{x:' + extent.x + ', y:' + extent.y + ', z:' + extent.z + '}'
+      + '})');
+    }
+  }
+    
   createOrUpdatePlane(id, node, center, extent) {
     if (this.webView) {
       this.webView.injectJavaScript(
-        'var d=document;var s = d.querySelector("a-scene");'
-      + 'var e = d.querySelector("#plane-' + id + '") || d.createElement("a-box");'
-      + 'e.setAttribute("id", "plane-' + id + '");'
+        'var d=document;var scene=d.querySelector("a-scene");'
+      + 'var e=d.querySelector("#plane-' + id + '") || d.createElement("a-box");'
       + 'e.setAttribute("position","' + (node.x + center.x) + ' ' + (node.y + center.y) + ' ' + (node.z + center.z) + '");'
-      + 'e.setAttribute("material", {color:"red",opacity:0.5});'
       + 'e.setAttribute("width", "' + extent.x + '");'
-      + 'e.setAttribute("height", "0.001");'
       + 'e.setAttribute("depth", "' + extent.z + '");'
-      + 'if (!e.parentElement) {s.appendChild(e);}'
+      + 'if (!e.parentElement) {'
+        + 'e.setAttribute("id", "plane-' + id + '");'
+        + 'e.setAttribute("material", {color:"red",opacity:0.5});'
+        + 'e.setAttribute("height", "0.001");'
+        + 'scene.appendChild(e);}'
       );
     }
   }
 
   onPlaneDetected(evt) {
     // extent, target, center, camera, alignment, node, id
-    var msg = 'onPlaneDetected center ' + positionString(evt.center) + ' extent ' + positionString(evt.extent) + ' id ' + evt.id + ' alignment ' + evt.alignment;
-    console.warn(msg);
+    var msg = 'onPlaneDetected id ' + evt.id + ' node ' + positionString(evt.node) + ' center ' + positionString(evt.center) + ' extent ' + positionString(evt.extent) + ' alignment ' + evt.alignment;
+    //console.warn(msg);
 
-    this.createOrUpdatePlane(evt.id, evt.node, evt.center, evt.extent);
+    //this.createOrUpdatePlane(evt.id, evt.node, evt.center, evt.extent);
+    this.emitScenePlaneEvent("planedetected", evt.id, evt.node, evt.center, evt.extent);
   }
 
   onPlaneUpdate(evt) {
     // extent, target, center, camera, alignment, node, id
-    var msg = 'onPlaneUpdate center ' + positionString(evt.center) + ' extent ' + positionString(evt.extent) + ' id ' + evt.id + ' alignment ' + evt.alignment;
-    console.warn(msg);
+    var msg = 'onPlaneUpdate id ' + evt.id + ' node ' + positionString(evt.node) + ' center ' + positionString(evt.center) + ' extent ' + positionString(evt.extent) + ' alignment ' + evt.alignment;
+    //console.warn(msg);
 
-    this.createOrUpdatePlane(evt.id, evt.node, evt.center, evt.extent);
+    //this.createOrUpdatePlane(evt.id, evt.node, evt.center, evt.extent);
+    this.emitScenePlaneEvent("planeupdate", evt.id, evt.node, evt.center, evt.extent);
   }
 
   componentDidMount() {
@@ -129,11 +152,34 @@ export default class arkit1 extends Component {
         <ARKit
           ref={(el) => this.ARKit = el}
           style={{ flex: 1 }}
-          debug
+          no-debug
           planeDetection
           lightEstimation
-          onPlaneDetected={this.onPlaneDetected.bind(this)} // event listener for plane detection
-          onPlaneUpdate={this.onPlaneUpdate.bind(this)} // event listener for plane update
+          onPlaneDetected={this.onPlaneDetected.bind(this)}
+          onPlaneUpdate={this.onPlaneUpdate.bind(this)}
+        >
+          <WebView
+            ref={(el) => this.webView = el}
+            style={{ backgroundColor: 'transparent', flex: 1 }}
+            source={{ uri: 'https://vivacious-butter.glitch.me' }}
+            allowsInlineMediaPlayback={ true }
+            mediaPlaybackRequiresUserAction={ false }
+            scrollEnabled={ false }
+          />
+        </ARKit>
+      </View>
+    );
+/*
+    return (
+      <View style={{ flex:1 }}>
+        <ARKit
+          ref={(el) => this.ARKit = el}
+          style={{ flex: 1 }}
+          no-debug
+          planeDetection
+          lightEstimation
+          onPlaneDetected={this.onPlaneDetected.bind(this)}
+          onPlaneUpdate={this.onPlaneUpdate.bind(this)}
         >
           <WebView
             ref={(el) => this.webView = el}
@@ -187,6 +233,7 @@ export default class arkit1 extends Component {
         </ARKit>
       </View>
     );
+*/
   }
 }
 
