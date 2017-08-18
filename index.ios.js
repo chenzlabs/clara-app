@@ -84,20 +84,36 @@ export default class arkit1 extends Component {
     this.rAF = requestAnimationFrame(this.everyFrame);
   }
 
+  createOrUpdatePlane(id, node, center, extent) {
+    if (this.webView) {
+      this.webView.injectJavaScript(
+        'var d=document;var s = d.querySelector("a-scene");'
+      + 'var e = d.querySelector("#plane-' + id + '") || d.createElement("a-box");'
+      + 'e.setAttribute("id", "plane-' + id + '");'
+      + 'e.setAttribute("position","' + (node.x + center.x) + ' ' + (node.y + center.y) + ' ' + (node.z + center.z) + '");'
+      + 'e.setAttribute("material", {color:"red",opacity:0.5});'
+      + 'e.setAttribute("width", "' + extent.x + '");'
+      + 'e.setAttribute("height", "0.001");'
+      + 'e.setAttribute("depth", "' + extent.z + '");'
+      + 'if (!e.parentElement) {s.appendChild(e);}'
+      );
+    }
+  }
+
   onPlaneDetected(evt) {
     // extent, target, center, camera, alignment, node, id
     var msg = 'onPlaneDetected center ' + positionString(evt.center) + ' extent ' + positionString(evt.extent) + ' id ' + evt.id + ' alignment ' + evt.alignment;
     console.warn(msg);
-    
-    if (self.webView) {
-      self.webView.injectJavaScript('var scene = document.querySelector("a-scene"); var e = document.createElement("a-box"); e.setAttribute("id", evt.id); e.setAttribute("position","' + positionString(evt.center) + '"); e.setAttribute("width", "' + evt.extent.x + '"); e.setAttribute("height", "' + evt.extent.z + '"); scene.appendChild(e)');
-    }
+
+    this.createOrUpdatePlane(evt.id, evt.node, evt.center, evt.extent);
   }
 
   onPlaneUpdate(evt) {
     // extent, target, center, camera, alignment, node, id
     var msg = 'onPlaneUpdate center ' + positionString(evt.center) + ' extent ' + positionString(evt.extent) + ' id ' + evt.id + ' alignment ' + evt.alignment;
     console.warn(msg);
+
+    this.createOrUpdatePlane(evt.id, evt.node, evt.center, evt.extent);
   }
 
   componentDidMount() {
@@ -116,8 +132,8 @@ export default class arkit1 extends Component {
           debug
           planeDetection
           lightEstimation
-          onPlaneDetected={this.onPlaneDetected} // event listener for plane detection
-          onPlaneUpdate={this.onPlaneUpdate} // event listener for plane update
+          onPlaneDetected={this.onPlaneDetected.bind(this)} // event listener for plane detection
+          onPlaneUpdate={this.onPlaneUpdate.bind(this)} // event listener for plane update
         >
           <WebView
             ref={(el) => this.webView = el}
