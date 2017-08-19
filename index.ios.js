@@ -73,13 +73,19 @@ export default class arkit1 extends Component {
     this.rAF = requestAnimationFrame(this.everyFrame);
   }
 
-  emitScenePlaneEvent(type, id, node, quaternion, center, extent) {
+  emitScenePlaneEvent(type, id, node, quaternion, center, extent, alignment, camera, transform) {
     var inner = 
-      'id:"' + id + '",'
-      + 'node:{x:' + node.x + ', y:' + node.y + ', z:' + node.z + '},'
+      'id:"' + id + '",';
+    if (type !== "planeremoved") {
+      inner += 'node:{x:' + node.x + ', y:' + node.y + ', z:' + node.z + '},'
       + 'quaternion:{x:' + quaternion.x + ', y:' + quaternion.y + ', z:' + quaternion.z + ',w:' + quaternion.w + '},'
       + 'center:{x:' + center.x + ', y:' + center.y + ', z:' + center.z + '},'
-      + 'extent:{x:' + extent.x + ', y:' + extent.y + ', z:' + extent.z + '}';
+      + 'extent:{x:' + extent.x + ', y:' + extent.y + ', z:' + extent.z + '},'
+      + 'alignment:' + alignment + ','
+      + 'camera:{x:' + camera.x + ', y:' + camera.y + ', z:' + camera.z + '},'
+      + 'transform:[' + transform + ']'
+      ;
+    }
     //console.warn(type + ': ' + inner);
     if (this.webView) {
       this.webView.injectJavaScript(
@@ -88,33 +94,19 @@ export default class arkit1 extends Component {
     }
   }
     
-  createOrUpdatePlane(id, node, center, extent) {
-    if (this.webView) {
-      this.webView.injectJavaScript(
-        'var d=document;var scene=d.querySelector("a-scene");'
-      + 'var e=d.querySelector("#plane-' + id + '") || d.createElement("a-box");'
-      + 'e.setAttribute("position","' + (node.x + center.x) + ' ' + (node.y + center.y) + ' ' + (node.z + center.z) + '");'
-      + 'e.setAttribute("width", "' + extent.x + '");'
-      + 'e.setAttribute("depth", "' + extent.z + '");'
-      + 'if (!e.parentElement) {'
-        + 'e.setAttribute("id", "plane-' + id + '");'
-        + 'e.setAttribute("material", {color:"red",opacity:0.5});'
-        + 'e.setAttribute("height", "0.001");'
-        + 'scene.appendChild(e);}'
-      );
-    }
-  }
-
   onPlaneDetected(evt) {
-    // extent, target, center, camera, alignment, node, id, quaternion
-    //this.createOrUpdatePlane(evt.id, evt.node, evt.center, evt.extent);
-    this.emitScenePlaneEvent("planedetected", evt.id, evt.node, evt.quaternion, evt.center, evt.extent, evt.alignment);
+    // extent, target, center, camera, alignment, node, id, quaternion, transform
+    this.emitScenePlaneEvent("planedetected", evt.id, evt.node, evt.quaternion, evt.center, evt.extent, evt.alignment, evt.camera, evt.transform);
   }
 
   onPlaneUpdate(evt) {
-    // extent, target, center, camera, alignment, node, id, quaternion
-    //this.createOrUpdatePlane(evt.id, evt.node, evt.center, evt.extent);
-    this.emitScenePlaneEvent("planeupdate", evt.id, evt.node, evt.quaternion, evt.center, evt.extent, evt.alignment);
+    // extent, target, center, camera, alignment, node, id, quaternion, transform
+    this.emitScenePlaneEvent("planeupdate", evt.id, evt.node, evt.quaternion, evt.center, evt.extent, evt.alignment, evt.camera, evt.transform);
+  }
+
+  onPlaneRemoved(evt) {
+    // id
+    this.emitScenePlaneEvent("planeremoved", evt.id);
   }
 
   componentDidMount() {
@@ -136,6 +128,7 @@ export default class arkit1 extends Component {
           lightEstimation
           onPlaneDetected={this.onPlaneDetected.bind(this)}
           onPlaneUpdate={this.onPlaneUpdate.bind(this)}
+          onPlaneRemoved={this.onPlaneRemoved.bind(this)}
         >
           <WebView
             ref={(el) => this.webView = el}
@@ -162,6 +155,7 @@ export default class arkit1 extends Component {
           lightEstimation
           onPlaneDetected={this.onPlaneDetected.bind(this)}
           onPlaneUpdate={this.onPlaneUpdate.bind(this)}
+          onPlaneRemoved={this.onPlaneRemoved.bind(this)}
         >
           <WebView
             ref={(el) => this.webView = el}
