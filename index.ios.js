@@ -93,15 +93,17 @@ export default class arkit1 extends Component {
   }
 
   emitScenePlaneEvent(type, id, node, quaternion, center, extent) {
-    if (this.webView) {
-      this.webView.injectJavaScript(
-        'document.querySelector("a-scene").emit("' + type + '",{'
-      + 'id:"' + id + '",'
+    var inner = 
+      'id:"' + id + '",'
       + 'node:{x:' + node.x + ', y:' + node.y + ', z:' + node.z + '},'
       + 'quaternion:{x:' + quaternion.x + ', y:' + quaternion.y + ', z:' + quaternion.z + ',w:' + quaternion.w + '},'
       + 'center:{x:' + center.x + ', y:' + center.y + ', z:' + center.z + '},'
-      + 'extent:{x:' + extent.x + ', y:' + extent.y + ', z:' + extent.z + '}'
-      + '})');
+      + 'extent:{x:' + extent.x + ', y:' + extent.y + ', z:' + extent.z + '}';
+    console.warn(type + ': ' + inner);
+    if (this.webView) {
+      this.webView.injectJavaScript(
+        'document.querySelector("a-scene").emit("'
+        + type + '",{' + inner + '})');
     }
   }
     
@@ -124,22 +126,14 @@ export default class arkit1 extends Component {
 
   onPlaneDetected(evt) {
     // extent, target, center, camera, alignment, node, id, quaternion
-/*
-    var msg = 'onPlaneDetected id ' + evt.id + ' node ' + positionString(evt.node) + ' center ' + positionString(evt.center) + ' extent ' + positionString(evt.extent) + ' alignment ' + evt.alignment;
-    console.warn(msg);
-*/
     //this.createOrUpdatePlane(evt.id, evt.node, evt.center, evt.extent);
-    this.emitScenePlaneEvent("planedetected", evt.id, evt.node, evt.quaternion, evt.center, evt.extent);
+    this.emitScenePlaneEvent("planedetected", evt.id, evt.node, evt.quaternion, evt.center, evt.extent, evt.alignment);
   }
 
   onPlaneUpdate(evt) {
-    // extent, target, center, camera, alignment, node, id
-/*
-    var msg = 'onPlaneUpdate id ' + evt.id + ' node ' + positionString(evt.node) + ' center ' + positionString(evt.center) + ' extent ' + positionString(evt.extent) + ' alignment ' + evt.alignment;
-    console.warn(msg);
-*/
+    // extent, target, center, camera, alignment, node, id, quaternion
     //this.createOrUpdatePlane(evt.id, evt.node, evt.center, evt.extent);
-    this.emitScenePlaneEvent("planeupdate", evt.id, evt.node, evt.quaternion, evt.center, evt.extent);
+    this.emitScenePlaneEvent("planeupdate", evt.id, evt.node, evt.quaternion, evt.center, evt.extent, evt.alignment);
   }
 
   componentDidMount() {
