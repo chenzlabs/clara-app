@@ -22,72 +22,53 @@ export default class arkit1 extends Component {
 
   syncCameraPosition(timestamp) {
     // Use camera position provided by ARKit.
+
+    // FIXME: works for portrait, and 90 CCW, but not 90 CW or 180
+    var w = Dimensions.get('window');
+    var EULERZOFFSET = (w.height > w.width) ? 90 : 0;
+
     var self = this;
     ARKit.getCameraPosition().then(function (camPos) {
+      var inner = 
+        '"position":{x:' + camPos.x
+        + ',y:' + camPos.y
+        + ',z:' + camPos.z
+        + '},"rotation":{x:' + (RAD2DEG * camPos.eulerX)
+        + ',y:' + (RAD2DEG * camPos.eulerY)
+        + ',z:' + (EULERZOFFSET + RAD2DEG * camPos.eulerZ)
+        ;
+      //console.warn('syncCameraPose: ' + inner);
       if (self.webView) {
-        // send event instead of directly manipulating camera
-
-        // FIXME: works for portrait, and 90 CCW, but not 90 CW or 180
-        var w = Dimensions.get('window');
-        var EULERZOFFSET = (w.height > w.width) ? 90 : 0;
-/*
-        var injectMe = 
-          'var c=document.querySelector("[camera]");'
-        + 'c.setAttribute("position","' + positionString(camPos) + '");';
-
-        if (camPos.eulerX) {
-          injectMe += 'c.setAttribute("rotation","'
-            + (RAD2DEG * camPos.eulerX) + ' '
-            + (RAD2DEG * camPos.eulerY) + ' '
-            + (EULERZOFFSET + RAD2DEG * camPos.eulerZ) + '");'; 
-        }
-        self.webView.injectJavaScript(injectMe);
-*/
         self.webView.injectJavaScript(
           'document.querySelector("a-scene").emit("synccamerapose",{'
-        + '"position":{x:' + camPos.x
-          + ',y:' + camPos.y
-          + ',z:' + camPos.z
-        + '},"rotation":{x:' + (RAD2DEG * camPos.eulerX)
-          + ',y:' + (RAD2DEG * camPos.eulerY)
-          + ',z:' + (EULERZOFFSET + RAD2DEG * camPos.eulerZ)
-        + '}})'); 
+          + inner + '}})'); 
       }
     });
   }
 
-  syncCameraProjectionMatrix(timestamp) {
-    // Use projection matrix provided by ARKit.
+  emitCurrentFrameParamsEvent(params) {
+    var projMatrix = params.projectionMatrix;
+    var inner = 'projectionMatrix:[' + projMatrix + ']'; //JSON.stringify(projMatrix);
+    //console.warn('currentFrameParams: ' + inner);
+    if (this.webView) {
+      this.webView.injectJavaScript(
+        'document.querySelector("a-scene").emit("currentframeparams",{'
+        + inner + '})');
+    }
+  }
+
+  syncCurrentFrameParams(timestamp) {
+    // Emit ARKit current frame params.
     var self = this;
-    ARKit.getCameraProjectionMatrix().then(function (projMatrix) {
-      if (self.webView) {
-        // TODO: send event instead of directly manipulating camera
-
-        // gather into array; stupid, but working...
-        var projMatrixString = '[';
-        for (var c=0; c<16; c++) {
-          if (c) { projMatrixString += ','; }
-          projMatrixString += projMatrix['c' + Math.floor(c/4) + 'r' + (c%4)];
-        }
-        projMatrixString += ']';
-
-        // NOTE: this does work, 
-        // but the projection matrix from iOS seems off somehow,
-        // makes things taller (when dimensions are 414x736);
-        // what A-Frame uses by default seems better?!?
-        self.webView.injectJavaScript('document.querySelector("a-scene").camera.projectionMatrix.elements = ' + projMatrixString);
-
-        // show on screen
-        //self.webView.injectJavaScript('document.querySelector("[text]").setAttribute("value", "' + timestamp + ': ' + projMatrixString + '");');
-      }
+    ARKit.getCurrentFrameParams().then(function (params) {
+      self.emitCurrentFrameParamsEvent(params);
     });
   }
-
 
   everyFrame(timestamp) {
     //this.showDimensions(timestamp);
     this.syncCameraPosition(timestamp);
-    //this.syncCameraProjectionMatrix(timestamp);
+    this.syncCurrentFrameParams(timestamp);
 
     this.rAF = requestAnimationFrame(this.everyFrame);
   }
@@ -99,7 +80,7 @@ export default class arkit1 extends Component {
       + 'quaternion:{x:' + quaternion.x + ', y:' + quaternion.y + ', z:' + quaternion.z + ',w:' + quaternion.w + '},'
       + 'center:{x:' + center.x + ', y:' + center.y + ', z:' + center.z + '},'
       + 'extent:{x:' + extent.x + ', y:' + extent.y + ', z:' + extent.z + '}';
-    console.warn(type + ': ' + inner);
+    //console.warn(type + ': ' + inner);
     if (this.webView) {
       this.webView.injectJavaScript(
         'document.querySelector("a-scene").emit("'
@@ -168,8 +149,11 @@ export default class arkit1 extends Component {
       </View>
     );
 */
+    // why won't WebView draw under StatusBar?  fine, hide it
+    // well, that doesn't work either... WebView still won't draw under it
+    // forcibly showing it doesn't work, ARKit draws over whole background
     return (
-      <View style={{ flex:1 }}>
+      <View style={{ flex: 1 }}>
         <ARKit
           ref={(el) => this.ARKit = el}
           style={{ flex: 1 }}
@@ -187,6 +171,7 @@ export default class arkit1 extends Component {
             mediaPlaybackRequiresUserAction={ false }
             scrollEnabled={ false }
           />
+
           <ARKit.Box
             pos={{ x: 0, y: 0, z: 0 }}
             shape={{ width: 0.1, height: 0.1, length: 0.1, chamfer: 0.01 }}
