@@ -5,7 +5,7 @@
  */
 
 import React, { Component } from 'react';
-import { AppRegistry, View, WebView } from 'react-native';
+import { AppRegistry, View, WebView, StatusBar } from 'react-native';
 import { ARKit } from 'react-native-arkit';
 import Dimensions from 'Dimensions';
 
@@ -157,6 +157,7 @@ export default class arkit1 extends Component {
           onPlaneUpdate={this.onPlaneUpdate.bind(this)}
           onPlaneRemoved={this.onPlaneRemoved.bind(this)}
         >
+          <StatusBar hidden/>
           <WebView
             ref={(el) => this.webView = el}
             style={{ backgroundColor: 'transparent', flex: 1 }}
