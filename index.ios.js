@@ -14,41 +14,12 @@ var RAD2DEG = 57.2958;
 function positionString(pos) { return pos.x + ' ' + pos.y + ' ' + pos.z; }
 
 export default class arkit1 extends Component {
-  showDimensions(timestamp) {
-    if (this.webView) {
-      this.webView.injectJavaScript('document.querySelector("[text]").setAttribute("value", "' + timestamp + ': ' + Dimensions.get('window').width + 'x' + Dimensions.get('window').height + '");');
-    }
-  }
-
-  syncCameraPosition(timestamp) {
-    // Use camera position provided by ARKit.
-
-    // FIXME: works for portrait, and 90 CCW, but not 90 CW or 180
-    var w = Dimensions.get('window');
-    var EULERZOFFSET = (w.height > w.width) ? 90 : 0;
-
-    var self = this;
-    ARKit.getCameraPosition().then(function (camPos) {
-      var inner = 
-        '"position":{x:' + camPos.x
-        + ',y:' + camPos.y
-        + ',z:' + camPos.z
-        + '},"rotation":{x:' + (RAD2DEG * camPos.eulerX)
-        + ',y:' + (RAD2DEG * camPos.eulerY)
-        + ',z:' + (EULERZOFFSET + RAD2DEG * camPos.eulerZ)
-        ;
-      //console.warn('syncCameraPose: ' + inner);
-      if (self.webView) {
-        self.webView.injectJavaScript(
-          'document.querySelector("a-scene").emit("synccamerapose",{'
-          + inner + '}})'); 
-      }
-    });
-  }
-
   emitCurrentFrameParamsEvent(params) {
-    var projMatrix = params.projectionMatrix;
-    var inner = 'projectionMatrix:[' + projMatrix + ']'; //JSON.stringify(projMatrix);
+    var inner = 'projectionMatrix:[' + params.projectionMatrix + ']'
+    + ',transform:[' + params.transform + ']'
+    + ',lightEstimate:{ambientIntensity:' + params.lightEstimate.ambientIntensity
+    // + ',ambientColorTemperature:' + params.lightEstimate.ambientColorTemperature
+    + '}';
     //console.warn('currentFrameParams: ' + inner);
     if (this.webView) {
       this.webView.injectJavaScript(
@@ -66,11 +37,9 @@ export default class arkit1 extends Component {
   }
 
   everyFrame(timestamp) {
-    //this.showDimensions(timestamp);
-    this.syncCameraPosition(timestamp);
     this.syncCurrentFrameParams(timestamp);
 
-    this.rAF = requestAnimationFrame(this.everyFrame);
+    this.rAF = requestAnimationFrame(this.everyFrameBound);
   }
 
   emitScenePlaneEvent(type, id, node, quaternion, center, extent, alignment, camera, transform) {
@@ -109,53 +78,46 @@ export default class arkit1 extends Component {
     this.emitScenePlaneEvent("planeremoved", evt.id);
   }
 
-  componentDidMount() {
-    this.everyFrame = this.everyFrame.bind(this);
-    this.rAF = requestAnimationFrame(this.everyFrame);
+  onWebViewMessage(evt) {
+    var data = evt.nativeEvent.data;
+    console.warn('onWebViewMessage: ', data);
+    if (data === 'disablePlaneDetection') {
+      ARKit.planeDetection = false;
+    } else
+    if (data === 'enablePlaneDetection') {
+      ARKit.planeDetection = true;
+    } else
   }
+
+  constructor(props) {
+    super(props);
+    this.everyFrameBound = this.everyFrame.bind(this);
+    this.onPlaneDetectedBound = this.onPlaneDetected.bind(this);
+    this.onPlaneUpdateBound = this.onPlaneUpdate.bind(this);
+    this.onPlaneRemovedBound = this.onPlaneRemoved.bind(this);
+    this.onWebViewMessageBound = this.onWebViewMessage.bind(this);
+  }
+
+  componentDidMount() {
+    this.rAF = requestAnimationFrame(this.everyFrameBound);
+  }
+
   componentWillUnmount() {
     cancelAnimationFrame(this.rAF);
   }
+
   render() {
-/*
+    // why won't WebView draw under StatusBar?  fine, hide it
     return (
       <View style={{ flex:1 }}>
         <ARKit
-          ref={(el) => this.ARKit = el}
           style={{ flex: 1 }}
           no-debug
           planeDetection
           lightEstimation
-          onPlaneDetected={this.onPlaneDetected.bind(this)}
-          onPlaneUpdate={this.onPlaneUpdate.bind(this)}
-          onPlaneRemoved={this.onPlaneRemoved.bind(this)}
-        >
-          <WebView
-            ref={(el) => this.webView = el}
-            style={{ backgroundColor: 'transparent', flex: 1 }}
-            source={{ uri: 'https://vivacious-butter.glitch.me' }}
-            allowsInlineMediaPlayback={ true }
-            mediaPlaybackRequiresUserAction={ false }
-            scrollEnabled={ false }
-          />
-        </ARKit>
-      </View>
-    );
-*/
-    // why won't WebView draw under StatusBar?  fine, hide it
-    // well, that doesn't work either... WebView still won't draw under it
-    // forcibly showing it doesn't work, ARKit draws over whole background
-    return (
-      <View style={{ flex: 1 }}>
-        <ARKit
-          ref={(el) => this.ARKit = el}
-          style={{ flex: 1 }}
-          debug
-          planeDetection
-          lightEstimation
-          onPlaneDetected={this.onPlaneDetected.bind(this)}
-          onPlaneUpdate={this.onPlaneUpdate.bind(this)}
-          onPlaneRemoved={this.onPlaneRemoved.bind(this)}
+          onPlaneDetected={this.onPlaneDetectedBound}
+          onPlaneUpdate={this.onPlaneUpdateBound}
+          onPlaneRemoved={this.onPlaneRemovedBound}
         >
           <StatusBar hidden/>
           <WebView
@@ -165,6 +127,32 @@ export default class arkit1 extends Component {
             allowsInlineMediaPlayback={ true }
             mediaPlaybackRequiresUserAction={ false }
             scrollEnabled={ false }
+            onMessage={ this.onWebViewMessageBound }
+          />
+        </ARKit>
+      </View>
+    );
+/*
+    return (
+      <View style={{ flex: 1 }}>
+        <ARKit
+          style={{ flex: 1 }}
+          debug
+          planeDetection
+          lightEstimation
+          onPlaneDetected={this.onPlaneDetectedBound}
+          onPlaneUpdate={this.onPlaneUpdateBound}
+          onPlaneRemoved={this.onPlaneRemovedBound}
+        >
+          <StatusBar hidden/>
+          <WebView
+            ref={(el) => this.webView = el}
+            style={{ backgroundColor: 'transparent', flex: 1 }}
+            source={{ uri: 'https://vivacious-butter.glitch.me' }}
+            allowsInlineMediaPlayback={ true }
+            mediaPlaybackRequiresUserAction={ false }
+            scrollEnabled={ false }
+            onMessage={ this.onWebViewMessageBound }
           />
 
           <ARKit.Box
@@ -211,6 +199,7 @@ export default class arkit1 extends Component {
         </ARKit>
       </View>
     );
+*/
   }
 }
 
