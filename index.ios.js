@@ -86,7 +86,7 @@ export default class arkit1 extends Component {
     } else
     if (data === 'enablePlaneDetection') {
       ARKit.planeDetection = true;
-    } else
+    }
   }
 
   constructor(props) {
