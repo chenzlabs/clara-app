@@ -17,6 +17,9 @@ export default class arkit1 extends Component {
   emitCurrentFrameParamsEvent(params) {
     var inner = 'projectionMatrix:[' + params.projectionMatrix + ']'
     + ',transform:[' + params.transform + ']'
+    + ',imageResolution:{width:' + params.imageResolution.width
+      + ',height:' + params.imageResolution.height + '}'
+    + ',intrinsics:[' + params.intrinsics + ']'
     + ',lightEstimate:{ambientIntensity:' + params.lightEstimate.ambientIntensity
     // + ',ambientColorTemperature:' + params.lightEstimate.ambientColorTemperature
     + '}';
