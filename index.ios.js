@@ -5,7 +5,8 @@
  */
 
 import React, { Component } from 'react';
-import { AppRegistry, View, WebView, StatusBar } from 'react-native';
+import { AppRegistry, View, StatusBar } from 'react-native';
+import { WKWebView } from 'react-native-wkwebview-reborn';
 import { ARKit } from 'react-native-arkit';
 import Dimensions from 'Dimensions';
 
@@ -25,7 +26,7 @@ export default class arkit1 extends Component {
     + '}';
     //console.warn('currentFrameParams: ' + inner);
     if (this.webView) {
-      this.webView.injectJavaScript(
+      this.webView.evaluateJavaScript(
         'document.querySelector("a-scene").emit("currentframeparams",{'
         + inner + '})');
     }
@@ -60,7 +61,7 @@ export default class arkit1 extends Component {
     }
     //console.warn(type + ': ' + inner);
     if (this.webView) {
-      this.webView.injectJavaScript(
+      this.webView.evaluateJavaScript(
         'document.querySelector("a-scene").emit("'
         + type + '",{' + inner + '})');
     }
@@ -123,7 +124,7 @@ export default class arkit1 extends Component {
           onPlaneRemoved={this.onPlaneRemovedBound}
         >
           <StatusBar hidden/>
-          <WebView
+          <WKWebView
             ref={(el) => this.webView = el}
             style={{ backgroundColor: 'transparent', flex: 1 }}
             source={{ uri: 'https://vivacious-butter.glitch.me' }}
@@ -148,7 +149,7 @@ export default class arkit1 extends Component {
           onPlaneRemoved={this.onPlaneRemovedBound}
         >
           <StatusBar hidden/>
-          <WebView
+          <WKWebView
             ref={(el) => this.webView = el}
             style={{ backgroundColor: 'transparent', flex: 1 }}
             source={{ uri: 'https://vivacious-butter.glitch.me' }}
