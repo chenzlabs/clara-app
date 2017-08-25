@@ -40,13 +40,12 @@ export default class arkit1 extends Component {
     this.rAF = requestAnimationFrame(this.everyFrameBound);
   }
 
-  emitScenePlaneEvent(type, id, node, quaternion, center, extent, alignment, camera, transform) {
+  emitScenePlaneEvent(type, id, center, extent, alignment, camera, transform) {
     var inner = 
       'id:"' + id + '",';
     if (type !== "planeremoved") {
-      inner += 'node:{x:' + node.x + ', y:' + node.y + ', z:' + node.z + '},'
-      + 'quaternion:{x:' + quaternion.x + ', y:' + quaternion.y + ', z:' + quaternion.z + ',w:' + quaternion.w + '},'
-      + 'center:{x:' + center.x + ', y:' + center.y + ', z:' + center.z + '},'
+      inner += 
+      'center:{x:' + center.x + ', y:' + center.y + ', z:' + center.z + '},'
       + 'extent:{x:' + extent.x + ', y:' + extent.y + ', z:' + extent.z + '},'
       + 'alignment:' + alignment + ','
       + 'camera:{x:' + camera.x + ', y:' + camera.y + ', z:' + camera.z + '},'
@@ -62,13 +61,13 @@ export default class arkit1 extends Component {
   }
     
   onPlaneDetected(evt) {
-    // extent, target, center, camera, alignment, node, id, quaternion, transform
-    this.emitScenePlaneEvent("planedetected", evt.id, evt.node, evt.quaternion, evt.center, evt.extent, evt.alignment, evt.camera, evt.transform);
+    // extent, target, center, camera, alignment, id, transform
+    this.emitScenePlaneEvent("planedetected", evt.id, evt.center, evt.extent, evt.alignment, evt.camera, evt.transform);
   }
 
   onPlaneUpdate(evt) {
-    // extent, target, center, camera, alignment, node, id, quaternion, transform
-    this.emitScenePlaneEvent("planeupdate", evt.id, evt.node, evt.quaternion, evt.center, evt.extent, evt.alignment, evt.camera, evt.transform);
+    // extent, target, center, camera, alignment, id, transform
+    this.emitScenePlaneEvent("planeupdate", evt.id, evt.center, evt.extent, evt.alignment, evt.camera, evt.transform);
   }
 
   onPlaneRemoved(evt) {
