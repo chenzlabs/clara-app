@@ -105,10 +105,13 @@ export default class arkit1 extends Component {
 
   render() {
     // why won't WebView draw under StatusBar?  fine, hide it
+    var debug = false;
+
     return (
       <View style={{ flex:1 }}>
         <ARKit
           style={{ flex: 1 }}
+          debug={ debug }
           planeDetection
           lightEstimation
           onPlaneDetected={(e) => this.onPlaneDetected(e)}
@@ -128,77 +131,51 @@ export default class arkit1 extends Component {
             onLoadStart={(e) => this.webviewLoaded = false }
             onLoad={(e) => this.webviewLoaded = true }
           />
-        </ARKit>
-      </View>
-    );
-/*
-    return (
-      <View style={{ flex: 1 }}>
-        <ARKit
-          style={{ flex: 1 }}
-          debug
-          planeDetection
-          lightEstimation
-          onPlaneDetected={this.onPlaneDetectedBound}
-          onPlaneUpdate={this.onPlaneUpdateBound}
-          onPlaneRemoved={this.onPlaneRemovedBound}
-        >
-          <StatusBar hidden/>
-          <WebView
-            ref={(el) => this.webView = el}
-            style={{ backgroundColor: 'transparent', flex: 1 }}
-            source={{ uri: 'https://vivacious-butter.glitch.me' }}
-            allowsInlineMediaPlayback={ true }
-            mediaPlaybackRequiresUserAction={ false }
-            scrollEnabled={ false }
-            onMessage={ this.onWebViewMessageBound }
-          />
 
-          <ARKit.Box
+          {debug && <ARKit.Box
             pos={{ x: 0, y: 0, z: 0 }}
             shape={{ width: 0.1, height: 0.1, length: 0.1, chamfer: 0.01 }}
-          />
-          <ARKit.Sphere
+          />}
+          {debug && <ARKit.Sphere
             pos={{ x: 0.2, y: 0, z: 0 }}
             shape={{ radius: 0.05 }}
-          />
-          <ARKit.Cylinder
+          />}
+          {debug && <ARKit.Cylinder
             pos={{ x: 0.4, y: 0, z: 0 }}
             shape={{ radius: 0.05, height: 0.1 }}
-          />
-          <ARKit.Cone
+          />}
+          {debug && <ARKit.Cone
             pos={{ x: 0, y: 0.2, z: 0 }}
             shape={{ topR: 0, bottomR: 0.05, height: 0.1 }}
-          />
-          <ARKit.Pyramid
+          />}
+          {debug && <ARKit.Pyramid
             pos={{ x: 0.2, y: 0.15, z: 0 }}
             shape={{ width: 0.1, height: 0.1, length: 0.1 }}
-          />
-          <ARKit.Tube
+          />}
+          {debug && <ARKit.Tube
             pos={{ x: 0.4, y: 0.2, z: 0 }}
             shape={{ innerR: 0.03, outerR: 0.05, height: 0.1 }}
-          />
-          <ARKit.Torus
+          />}
+          {debug && <ARKit.Torus
             pos={{ x: 0, y: 0.4, z: 0 }}
             shape={{ ringR: 0.06, pipeR: 0.02 }}
-          />
-          <ARKit.Capsule
+          />}
+          {debug && <ARKit.Capsule
             pos={{ x: 0.2, y: 0.4, z: 0 }}
             shape={{ capR: 0.02, height: 0.06 }}
-          />
-          <ARKit.Plane
+          />}
+          {debug && <ARKit.Plane
             pos={{ x: 0.4, y: 0.4, z: 0 }}
             shape={{ width: 0.1, height: 0.1 }}
-          />
-          <ARKit.Text
+          />}
+          {debug && <ARKit.Text
             text="ARKit is Cool!"
             pos={{ x: 0.2, y: 0.6, z: 0 }}
             font={{ size: 0.15, depth: 0.05 }}
-          />
+          />}
         </ARKit>
       </View>
     );
-*/
   }
 }
 
