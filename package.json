@@ -10,7 +10,7 @@
     "react": "16.0.0-alpha.12",
     "react-native": "0.47.1",
     "react-native-arkit": "github:machenmusik/react-native-arkit#master",
-    "react-native-wkwebview-reborn": "github:sportnak/react-native-wkwebview#patch-refs"
+    "react-native-wkwebview-reborn": "github:machenmusik/react-native-wkwebview#master"
   },
   "devDependencies": {
     "babel-jest": "20.0.3",
