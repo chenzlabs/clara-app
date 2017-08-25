@@ -5,8 +5,8 @@
  */
 
 import React, { Component } from 'react';
-import { AppRegistry, View, StatusBar } from 'react-native';
-import { WKWebView } from 'react-native-wkwebview-reborn';
+import { AppRegistry, View, StatusBar, WebView } from 'react-native';
+import WKWebView from 'react-native-wkwebview-reborn';
 import { ARKit } from 'react-native-arkit';
 import Dimensions from 'Dimensions';
 
@@ -25,10 +25,10 @@ export default class arkit1 extends Component {
     // + ',ambientColorTemperature:' + params.lightEstimate.ambientColorTemperature
     + '}';
     //console.warn('currentFrameParams: ' + inner);
-    if (this.webView) {
-      this.webView.evaluateJavaScript(
-        'document.querySelector("a-scene").emit("currentframeparams",{'
-        + inner + '})');
+    if (this.webview && this.webviewLoaded) {
+      this.webview.evaluateJavaScript(
+        'var s=document.querySelector("a-scene");'
+        + 'if(s.hasLoaded){s.emit("currentframeparams",{' + inner + '})}');
     }
   }
 
@@ -60,10 +60,10 @@ export default class arkit1 extends Component {
       ;
     }
     //console.warn(type + ': ' + inner);
-    if (this.webView) {
-      this.webView.evaluateJavaScript(
-        'document.querySelector("a-scene").emit("'
-        + type + '",{' + inner + '})');
+    if (this.webview && this.webviewLoaded) {
+      this.webview.evaluateJavaScript(
+        'var s=document.querySelector("a-scene");'
+        + 'if(s.hasLoaded){s.emit("' + type + '",{' + inner + '})}');
     }
   }
     
@@ -116,22 +116,24 @@ export default class arkit1 extends Component {
       <View style={{ flex:1 }}>
         <ARKit
           style={{ flex: 1 }}
-          no-debug
           planeDetection
           lightEstimation
-          onPlaneDetected={this.onPlaneDetectedBound}
-          onPlaneUpdate={this.onPlaneUpdateBound}
-          onPlaneRemoved={this.onPlaneRemovedBound}
+          onPlaneDetected={(e) => this.onPlaneDetected(e)}
+          onPlaneUpdate={(e) => this.onPlaneUpdate(e)}
+          onPlaneRemoved={(e) => this.onPlaneRemoved(e)}
         >
           <StatusBar hidden/>
           <WKWebView
-            ref={(el) => this.webView = el}
+            ref={(el) => this.webview = el}
             style={{ backgroundColor: 'transparent', flex: 1 }}
             source={{ uri: 'https://vivacious-butter.glitch.me' }}
+            sendCookies={ true }
             allowsInlineMediaPlayback={ true }
             mediaPlaybackRequiresUserAction={ false }
             scrollEnabled={ false }
-            onMessage={ this.onWebViewMessageBound }
+            onMessage={(e) => this.onWebViewMessage(e) }
+            onLoadStart={(e) => this.webviewLoaded = false }
+            onLoad={(e) => this.webviewLoaded = true }
           />
         </ARKit>
       </View>
@@ -149,7 +151,7 @@ export default class arkit1 extends Component {
           onPlaneRemoved={this.onPlaneRemovedBound}
         >
           <StatusBar hidden/>
-          <WKWebView
+          <WebView
             ref={(el) => this.webView = el}
             style={{ backgroundColor: 'transparent', flex: 1 }}
             source={{ uri: 'https://vivacious-butter.glitch.me' }}
