@@ -5,7 +5,7 @@
  */
 
 import React, { Component } from 'react';
-import { AppRegistry, View, StatusBar, WebView } from 'react-native';
+import { AppRegistry, View, StatusBar } from 'react-native';
 import WKWebView from 'react-native-wkwebview-reborn';
 import { ARKit } from 'react-native-arkit';
 import Dimensions from 'Dimensions';
