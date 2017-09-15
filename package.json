@@ -1,5 +1,5 @@
 {
-  "name": "arkit1",
+  "name": "clara",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -7,9 +7,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "babel-core": "^6.26.0",
     "react": "16.0.0-alpha.12",
     "react-native": "0.47.1",
-    "react-native-arkit": "github:machenmusik/react-native-arkit#master",
+    "react-native-arkit": "github:machenmusik/react-native-arkit#webar-vision-barcode-pointcloud",
+    "react-native-tts": "github:machenmusik/react-native-tts#master",
+    "react-native-voice": "github:machenmusik/react-native-voice#master",
     "react-native-wkwebview-reborn": "github:machenmusik/react-native-wkwebview#master"
   },
   "devDependencies": {
