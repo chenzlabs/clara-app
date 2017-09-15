@@ -8,6 +8,5 @@ iOS 11+ ARKit application with
 - Voice recognition using Siri
 - Text-to-speech using AVSpeechSynthesizer
 
-FIXME: a bit flaky/crash-y at the moment, voice and text-to-speech don't get along well at the moment
-
-(Also, Hockey files are integrated, but untested.)
+FIXME: a tiny bit flaky/crash-y at the moment, 
+sometimes voice and text-to-speech don't get along well at the moment
