@@ -16,6 +16,7 @@ var finalResultsInterval = 1500;
 function positionString(pos) { return pos.x + ' ' + pos.y + ' ' + pos.z; }
 
 var dummyReturn = Promise.resolve(undefined);
+var jscomponentname = "clara";
 
 export default class arkit1 extends Component {
   webviewEJS(js) {
@@ -30,7 +31,7 @@ export default class arkit1 extends Component {
     //console.warn('currentFramePointCloud: ' + inner);
     this.webviewEJS(
         'var s=document.querySelector("a-scene");'
-        + 'if(s&&s.hasLoaded){var a=document.querySelector("[rn-arkit]");if (a) a.emit("currentframepointcloud",{' + inner + '})}')
+        + 'if(s&&s.hasLoaded){var a=document.querySelector("[' + jscomponentname + ']");if (a) a.emit("currentframepointcloud",{' + inner + '})}')
       .catch(function(e) { console.warn('emitCurrentFramePointCloudEvent eJS catch', e); });
   }
 
@@ -46,7 +47,7 @@ export default class arkit1 extends Component {
     //console.warn('currentFrameParams: ' + inner);
     this.webviewEJS(
         'var s=document.querySelector("a-scene");'
-        + 'if(s&&s.hasLoaded){var a=document.querySelector("[rn-arkit]");if (a) a.emit("currentframeparams",{' + inner + '})}')
+        + 'if(s&&s.hasLoaded){var a=document.querySelector("[' + jscomponentname + ']");if (a) a.emit("currentframeparams",{' + inner + '})}')
       .catch(function(e) { console.warn('emitCurrentFrameParamsEvent eJS catch', e); });
   }
 
@@ -69,7 +70,7 @@ export default class arkit1 extends Component {
     //console.warn('analyzeCurrentFrame: ' + inner);
     this.webviewEJS(
         'var s=document.querySelector("a-scene");'
-        + 'if(s&&s.hasLoaded){var a=document.querySelector("[rn-arkit]"); if (a) a.emit("analyzecurrentframe",{' + inner + '})}')
+        + 'if(s&&s.hasLoaded){var a=document.querySelector("[' + jscomponentname + ']"); if (a) a.emit("analyzecurrentframe",{' + inner + '})}')
       .catch(function(e) { console.warn('emitAnalyzeCurrentFrameEvent eJS catch', e); });
   }
 
@@ -92,7 +93,7 @@ export default class arkit1 extends Component {
     //console.warn('barcodesCurrentFrame: ' + inner);
     this.webviewEJS(
         'var s=document.querySelector("a-scene");'
-        + 'if(s&&s.hasLoaded){var a=document.querySelector("[rn-arkit]");if (a) a.emit("barcodescurrentframe",{' + inner + '})}')
+        + 'if(s&&s.hasLoaded){var a=document.querySelector("[' + jscomponentname + ']");if (a) a.emit("barcodescurrentframe",{' + inner + '})}')
       .catch(function(e) { console.warn('emitBarcodesCurrentFrameEvent eJS catch', e); });
   }
 
@@ -125,7 +126,7 @@ export default class arkit1 extends Component {
     //console.warn(type + ': ' + inner);
     this.webviewEJS(
         'var s=document.querySelector("a-scene");'
-        + 'if(s&&s.hasLoaded){var a=document.querySelector("[rn-arkit]");if (a) a.emit("' + type + '",{' + inner + '})}')
+        + 'if(s&&s.hasLoaded){var a=document.querySelector("[' + jscomponentname + ']");if (a) a.emit("' + type + '",{' + inner + '})}')
       .catch(function(e) { console.warn('emitScenePlaneEvent eJS catch', e); });
   }
     
@@ -234,7 +235,7 @@ export default class arkit1 extends Component {
     //console.warn('voice' + type + ': ' + inner);
     this.webviewEJS(
         'var s=document.querySelector("a-scene");'
-        + 'if(s&&s.hasLoaded){var a=document.querySelector("[rn-arkit]");if (a) a.emit("voice' + type + '",' + inner + ')}')
+        + 'if(s&&s.hasLoaded){var a=document.querySelector("[' + jscomponentname + ']");if (a) a.emit("voice' + type + '",' + inner + ')}')
       .catch(function(e) { console.warn('emitVoiceEvent eJS catch', e); });
   }
 
@@ -258,7 +259,7 @@ export default class arkit1 extends Component {
     //console.warn('tts-' + type + ': ' + inner);
     this.webviewEJS(
         'var s=document.querySelector("a-scene");'
-        + 'if(s&&s.hasLoaded){var a=document.querySelector("[rn-arkit]");if (a) a.emit("tts-' + type + '",' + inner + ')}')
+        + 'if(s&&s.hasLoaded){var a=document.querySelector("[' + jscomponentname + ']");if (a) a.emit("tts-' + type + '",' + inner + ')}')
       .catch(function(e) { console.warn('emitTTSEvent eJS catch', e); });
   }
 
