@@ -179,6 +179,11 @@ export default class arkit1 extends Component {
     } else
     if (data === 'voiceStart') {
       //console.warn(data);
+      // Make sure we cancel any pending final recognitions.
+      if (self.voiceTimeout) {
+        clearTimeout(self.voiceTimeout); 
+        self.voiceTimeout = null;
+      }
       Voice.start('en'); // TODO: properly determine locale
     } else
     if (data === 'voiceStop') {
@@ -187,6 +192,11 @@ export default class arkit1 extends Component {
     } else
     if (data === 'voiceCancel') {
       //console.warn(data);
+      // Make sure we cancel any pending final recognitions.
+      if (self.voiceTimeout) {
+        clearTimeout(self.voiceTimeout); 
+        self.voiceTimeout = null;
+      }
       Voice.cancel();
     } else
     if (data === 'voiceAvailable') {
