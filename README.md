@@ -6,6 +6,8 @@ iOS 11+ ARKit application with
 - WebAR compatibility with WebARonARKit/Core
 - ARKit integration, including access to raw feature points / point cloud
 - Voice recognition using Siri
-- Text-to-speech using AVSpeechSynthesizer (FIXME: a bit flaky/crash-y at the moment)
+- Text-to-speech using AVSpeechSynthesizer
+
+FIXME: a bit flaky/crash-y at the moment, voice and text-to-speech don't get along well at the moment
 
 (Also, Hockey files are integrated, but untested.)
