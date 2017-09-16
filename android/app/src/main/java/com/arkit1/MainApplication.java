@@ -3,6 +3,7 @@ package com.arkit1;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactlibrary.RNSimpleCompassPackage;
 import net.no_mad.tts.TextToSpeechPackage;
 import com.omega.speech.SpeechSynthesizerPackage;
 import com.wenkesj.voice.VoicePackage;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSimpleCompassPackage(),
             new TextToSpeechPackage(),
             new SpeechSynthesizerPackage(),
             new VoicePackage()

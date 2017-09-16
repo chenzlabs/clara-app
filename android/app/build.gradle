@@ -133,6 +133,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-simple-compass')
     compile project(':react-native-tts')
     compile project(':react-native-speech')
     compile project(':react-native-voice')

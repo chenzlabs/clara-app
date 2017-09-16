@@ -5,6 +5,7 @@ import { ARKit } from 'react-native-arkit';
 import Voice from 'react-native-voice';
 import Dimensions from 'Dimensions';
 import Tts from 'react-native-tts';
+import RNSimpleCompass from 'react-native-simple-compass';
 
 // doesn't work?
 import WebARonARKit from './WebARonARKit-json';
@@ -144,7 +145,17 @@ export default class arkit1 extends Component {
     // id
     this.emitScenePlaneEvent("planeremoved", evt.id);
   }
-
+ 
+  emitCompassHeading(degrees) {
+    var type = 'compassheading';
+    var inner = 'degrees:' + degrees;
+    //console.warn(type + ': ' + inner);
+    this.webviewEJS(
+        'var s=document.querySelector("a-scene");'
+        + 'if(s&&s.hasLoaded){var a=document.querySelector("[' + jscomponentname + ']");if (a) a.emit("' + type + '",{' + inner + '})}')
+      .catch(function(e) { console.warn('emitCompassHeading eJS catch', e); });
+  }
+    
   onWebViewMessage(evt) {
     var self = this;
     var data = evt.body || (evt.nativeEvent && evt.nativeEvent.data);
@@ -224,9 +235,25 @@ export default class arkit1 extends Component {
     } else
     if (data.startsWith('stopSpeaking')) {
       this.stopSpeaking();
-    }
+    } else
     if (data.startsWith('speak:')) {
       this.speak(data.substring(6));
+    } else
+    if (data.startsWith('getCompassHeading')) {
+      console.warn(data);
+      RNSimpleCompass.start(0, function (degrees) {
+        self.emitCompassHeading(degrees);
+        RNSimpleCompass.stop();
+      });
+    } else
+    if (data.startsWith('startCompass')) {
+      var delta = (data.length > 13) ? parseFloat(data.substring(13)) : 1; 
+      RNSimpleCompass.start(delta, function (degrees) {
+        self.emitCompassHeading(degrees);
+      });
+    } else
+    if (data.startsWith('stopCompass')) {
+      RNSimpleCompass.stop();
     }
   }
 

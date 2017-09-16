@@ -11,6 +11,7 @@
     "react": "16.0.0-alpha.12",
     "react-native": "0.47.1",
     "react-native-arkit": "github:machenmusik/react-native-arkit#webar-vision-barcode-pointcloud",
+    "react-native-simple-compass": "github:machenmusik/react-native-simple-compass#master",
     "react-native-tts": "github:machenmusik/react-native-tts#master",
     "react-native-voice": "github:machenmusik/react-native-voice#master",
     "react-native-wkwebview-reborn": "github:machenmusik/react-native-wkwebview#master"
