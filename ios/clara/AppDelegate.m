@@ -21,8 +21,7 @@
   [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"fe983fd9132146e38d59460d66224c5d"];
   // Do some additional configuration if needed here
   [[BITHockeyManager sharedHockeyManager] startManager];
-  [[BITHockeyManager sharedHockeyManager].authenticator
-   authenticateInstallation];
+  [[BITHockeyManager sharedHockeyManager].authenticator authenticateInstallation];
 
   NSURL *jsCodeLocation;
 

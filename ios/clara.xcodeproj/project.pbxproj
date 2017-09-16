@@ -25,14 +25,14 @@
 		454E44091F52116700E807DC /* libTextToSpeech.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 454E44081F52115700E807DC /* libTextToSpeech.a */; };
 		4561C6F51F6C7340000F9620 /* libRNSimpleCompass.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4561C6F41F6C72BD000F9620 /* libRNSimpleCompass.a */; };
 		4561C6F61F6C7353000F9620 /* libRCTARKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 456DC2BF1F4537D700C44E73 /* libRCTARKit.a */; };
-		4576A2B71F53DAF800FE9803 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4576A2B61F53DAF300FE9803 /* HockeySDK.framework */; };
-		4576A2B91F53DB0700FE9803 /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4576A2B81F53DB0300FE9803 /* HockeySDKResources.bundle */; };
 		4584F6561F6C208B003C4EA6 /* AgeNet.mlmodel in Resources */ = {isa = PBXBuildFile; fileRef = 4584F6551F6C204F003C4EA6 /* AgeNet.mlmodel */; };
 		4584F6571F6C208B003C4EA6 /* CNNEmotions.mlmodel in Resources */ = {isa = PBXBuildFile; fileRef = 4584F6531F6C204F003C4EA6 /* CNNEmotions.mlmodel */; };
 		4584F6581F6C208B003C4EA6 /* GenderNet.mlmodel in Resources */ = {isa = PBXBuildFile; fileRef = 4584F6501F6C204F003C4EA6 /* GenderNet.mlmodel */; };
 		4584F6591F6C208B003C4EA6 /* Inceptionv3.mlmodel in Resources */ = {isa = PBXBuildFile; fileRef = 4584F6521F6C204F003C4EA6 /* Inceptionv3.mlmodel */; };
 		4584F65A1F6C208B003C4EA6 /* MobileNet.mlmodel in Resources */ = {isa = PBXBuildFile; fileRef = 4584F6541F6C204F003C4EA6 /* MobileNet.mlmodel */; };
 		4584F65B1F6C208B003C4EA6 /* SqueezeNet.mlmodel in Resources */ = {isa = PBXBuildFile; fileRef = 4584F6511F6C204F003C4EA6 /* SqueezeNet.mlmodel */; };
+		45A830331F6D75D3009A64AA /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45A830321F6D75D3009A64AA /* HockeySDK.framework */; };
+		45A830341F6D75EF009A64AA /* HockeySDK.embeddedframework in Resources */ = {isa = PBXBuildFile; fileRef = 45A8300E1F6D753C009A64AA /* HockeySDK.embeddedframework */; };
 		45AB38B71F4FCC5200BA386E /* libVoice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 45AB38B61F4FCBE200BA386E /* libVoice.a */; };
 		45C5C7661F4F93E9003300CA /* libRCTWKWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 45C5C7651F4F92CB003300CA /* libRCTWKWebView.a */; };
 		45FCD3981F6C17DF0047DA1E /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
@@ -317,6 +317,8 @@
 		4584F6531F6C204F003C4EA6 /* CNNEmotions.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = CNNEmotions.mlmodel; sourceTree = "<group>"; };
 		4584F6541F6C204F003C4EA6 /* MobileNet.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = MobileNet.mlmodel; sourceTree = "<group>"; };
 		4584F6551F6C204F003C4EA6 /* AgeNet.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = AgeNet.mlmodel; sourceTree = "<group>"; };
+		45A8300E1F6D753C009A64AA /* HockeySDK.embeddedframework */ = {isa = PBXFileReference; lastKnownFileType = folder; path = HockeySDK.embeddedframework; sourceTree = "<group>"; };
+		45A830321F6D75D3009A64AA /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = HockeySDK.embeddedframework/HockeySDK.framework; sourceTree = "<group>"; };
 		45AB38B11F4FCBE200BA386E /* Voice.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Voice.xcodeproj; path = "../node_modules/react-native-voice/ios/Voice.xcodeproj"; sourceTree = "<group>"; };
 		45C5C7601F4F92CB003300CA /* RCTWKWebView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWKWebView.xcodeproj; path = "../node_modules/react-native-wkwebview-reborn/ios/RCTWKWebView.xcodeproj"; sourceTree = "<group>"; };
 		59CC6058587E4F3581CFFF1A /* libSpeechSynthesizer.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSpeechSynthesizer.a; sourceTree = "<group>"; };
@@ -343,13 +345,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45A830331F6D75D3009A64AA /* HockeySDK.framework in Frameworks */,
 				4561C6F61F6C7353000F9620 /* libRCTARKit.a in Frameworks */,
 				4561C6F51F6C7340000F9620 /* libRNSimpleCompass.a in Frameworks */,
 				454E44091F52116700E807DC /* libTextToSpeech.a in Frameworks */,
 				45AB38B71F4FCC5200BA386E /* libVoice.a in Frameworks */,
 				45C5C7661F4F93E9003300CA /* libRCTWKWebView.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
-				4576A2B71F53DAF800FE9803 /* HockeySDK.framework in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
@@ -479,6 +481,7 @@
 		454E43D41F520DEF00E807DC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				45A830321F6D75D3009A64AA /* HockeySDK.framework */,
 				4576A2B81F53DB0300FE9803 /* HockeySDKResources.bundle */,
 				4576A2B61F53DAF300FE9803 /* HockeySDK.framework */,
 			);
@@ -589,6 +592,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				45A8300E1F6D753C009A64AA /* HockeySDK.embeddedframework */,
 				4584F6551F6C204F003C4EA6 /* AgeNet.mlmodel */,
 				4584F6531F6C204F003C4EA6 /* CNNEmotions.mlmodel */,
 				4584F6501F6C204F003C4EA6 /* GenderNet.mlmodel */,
@@ -1013,6 +1017,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45A830341F6D75EF009A64AA /* HockeySDK.embeddedframework in Resources */,
 				4584F6561F6C208B003C4EA6 /* AgeNet.mlmodel in Resources */,
 				4584F6571F6C208B003C4EA6 /* CNNEmotions.mlmodel in Resources */,
 				4584F6581F6C208B003C4EA6 /* GenderNet.mlmodel in Resources */,
@@ -1021,7 +1026,6 @@
 				4584F65B1F6C208B003C4EA6 /* SqueezeNet.mlmodel in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				45FCD3981F6C17DF0047DA1E /* main.jsbundle in Resources */,
-				4576A2B91F53DB0700FE9803 /* HockeySDKResources.bundle in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1190,6 +1194,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/HockeySDK.embeddedframework",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1229,6 +1234,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/HockeySDK.embeddedframework",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
